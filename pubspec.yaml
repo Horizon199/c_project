@@ -27,7 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  geolocator: ^7.0.0
+  geolocator: ^7.6.2
   flutter:
     sdk: flutter
 

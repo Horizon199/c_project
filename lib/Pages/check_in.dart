@@ -13,8 +13,11 @@ class _DashboardState extends State<DashboardScreen> {
   // you don't need to create an instance of Geolocator; its functions are static
   // final Geolocator geolocator = Geolocator();
   // you also don't need these but i see where you're going with this.
-  late Position _currentPosition;
+  // late Position _currentPosition;
   // late String _currentAddress;
+  double latitude = 0.0;
+  double longitude = 0.0;
+  double accuracy = 0.0;
 
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
@@ -53,10 +56,17 @@ class _DashboardState extends State<DashboardScreen> {
     return await Geolocator.getCurrentPosition();
   }
 
+  Future<void> initPosition() async {
+    Position currentPosition = await _determinePosition();
+    latitude = currentPosition.latitude;
+    longitude = currentPosition.longitude;
+    accuracy = currentPosition.accuracy;
+  }
+
   @override
   void initState() {
     super.initState();
-    _currentPosition = _determinePosition() as Position;
+    initPosition();
   }
 
 /*   _getCurrentLocation() {
@@ -140,11 +150,11 @@ class _DashboardState extends State<DashboardScreen> {
                                 ),
                                 Text(
                                     "Lat: " +
-                                        _currentPosition.latitude.toString() +
+                                        latitude.toString() +
                                         "\nLong: " +
-                                        _currentPosition.longitude.toString() +
+                                        longitude.toString() +
                                         "\nAccuracy: " +
-                                        _currentPosition.accuracy.toString(),
+                                        accuracy.toString(),
                                     style:
                                         Theme.of(context).textTheme.bodyText2),
                               ],
