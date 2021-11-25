@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:c_project/Pages/login.dart';
-import 'package:c_project/Pages/check_in.dart';
+import 'Pages/checkin2.dart';
 
 void main() => runApp(MyApp());
 
@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: DashboardScreen(),
+      home: Checking(),
     );
   }
 }
