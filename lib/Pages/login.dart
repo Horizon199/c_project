@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:c_project/utilities/constants.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:c_project/Pages/checkin2.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -8,6 +11,63 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  Future<bool> registerUser(String email, String password) async{
+     print(email);
+     print(password);
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:4001/register'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'email': email,
+        'password': password,
+      }),
+     );
+         if (response.statusCode == 201) {
+          return true;
+     } else {
+          return false;
+         }
+  }
+
+  Future<bool> loginUser(String email, String password) async{
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:4001/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'email': email,
+        'password': password,
+      }),
+    );
+    if (response.statusCode == 200) {
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Checking()),
+      );
+      return true;
+    } else {
+      print(response.body);
+      return false;
+    }
+  }
+
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
 
   Widget _buildEmailTF() {
     return Column(
@@ -23,6 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: kBoxDecorationStyle,
           height: 60.0,
           child: TextField(
+            controller: emailController,
             keyboardType: TextInputType.emailAddress,
             style: const TextStyle(
               color: Colors.white,
@@ -58,6 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: kBoxDecorationStyle,
           height: 60.0,
           child: TextField(
+            controller: passwordController,
             obscureText: true,
             style: const TextStyle(
               color: Colors.white,
@@ -95,12 +157,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
   Widget _buildLoginBtn() {
+    onPressed(){
+      loginUser(emailController.text, passwordController.text);
+    }
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: RaisedButton(
         elevation: 5.0,
-        onPressed: () => print('Login Button Pressed'),
+        onPressed: () => onPressed(),
         padding: EdgeInsets.all(15.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
@@ -122,35 +187,39 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
   Widget _buildSignupBtn() {
-    return GestureDetector(
-      onTap: () => print('Sign Up Button Pressed'),
-      child: RichText(
-        text: const TextSpan(
-          children: [
-            TextSpan(
-              text: 'Don\'t have an Account? ',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            TextSpan(
-              text: 'Sign Up',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+    onPressed(){
+      registerUser(emailController.text, passwordController.text);
+    }
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 25.0),
+      width: double.infinity,
+      child: RaisedButton(
+        elevation: 5.0,
+        onPressed: () => onPressed(),
+        padding: EdgeInsets.all(15.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        color: Colors.white,
+        child: const Text(
+          'Signup',
+          style: TextStyle(
+            color: Color(0xFF8E24AA),
+            letterSpacing: 1.5,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'OpenSans',
+          ),
         ),
       ),
     );
   }
 
   @override
+
+
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
